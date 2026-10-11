@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>摸鱼天堂 - 网页游戏导航</title>
+    <style>
+      :root {
+        --bg: #f3f1eb;
+        --panel: #fffdfb;
+        --panel-strong: #4a2d22;
+        --primary: #1e62d6;
+        --primary-soft: #edf4ff;
+        --text: #1f2a37;
+        --muted: #5d6b7b;
+        --line: rgba(31, 42, 55, 0.08);
+        --shadow: 0 18px 35px rgba(52, 42, 39, 0.08);
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: #f3f1ed;
+        color: var(--text);
+      }
+
+      .page {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 28px 24px 40px;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 12px;
+      }
+
+      .language-select {
+        appearance: none;
+        border: 1px solid #d8dee8;
+        border-radius: 10px;
+        background: #fff;
+        color: #344054;
+        font: inherit;
+        padding: 8px 34px 8px 12px;
+        cursor: pointer;
+        background-image: linear-gradient(45deg, transparent 50%, #667085 50%), linear-gradient(135deg, #667085 50%, transparent 50%);
+        background-position: calc(100% - 16px) 50%, calc(100% - 11px) 50%;
+        background-size: 5px 5px, 5px 5px;
+        background-repeat: no-repeat;
+      }
+
+      .site-note {
+        margin-bottom: 22px;
+        padding: 14px 16px;
+        border-left: 4px solid #e5a446;
+        border-radius: 8px;
+        background: #fff9ed;
+        color: #514536;
+        line-height: 1.7;
+      }
+
+      .site-note a {
+        color: #0d63d8;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .site-note a:hover {
+        text-decoration: underline;
+      }
+
+      .url-list a {
+        color: #0d63d8;
+        text-decoration: none;
+      }
+
+      .url-list a:hover {
+        text-decoration: underline;
+      }
+
+      .hero {
+        margin-bottom: 24px;
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 46px);
+        letter-spacing: 0.04em;
+        font-weight: 900;
+      }
+
+      .link-panel {
+        border-radius: 18px;
+        padding: 22px 24px;
+        box-shadow: 0 14px 32px rgba(52, 42, 39, 0.08);
+      }
+
+      .featured-panel {
+        background: linear-gradient(135deg, #eef5ff, #f8fbff);
+        border: 1px solid #dce9fb;
+      }
+
+      .featured-panel h2 {
+        margin: 0 0 14px;
+        color: #234e86;
+        font-size: 20px;
+      }
+
+      .url-zone {
+        margin-top: 30px;
+        background: linear-gradient(135deg, #fff7e8, #fffaf2);
+        border: 1px solid #f0dfc2;
+        border-radius: 18px;
+        padding: 22px 24px;
+        box-shadow: 0 14px 32px rgba(78, 58, 34, 0.07);
+      }
+
+      .url-zone h3 {
+        margin: 0 0 16px;
+        font-size: 20px;
+        color: #6e4b1f;
+      }
+
+      .url-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px 22px;
+        font-size: 15px;
+      }
+
+      .url-list a {
+        display: block;
+        max-width: 100%;
+        overflow-wrap: anywhere;
+        padding: 5px 0;
+      }
+
+      .comments-panel {
+        margin-top: 30px;
+        padding: 22px 24px;
+        border: 1px solid #dfe6e2;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #f0f8f4, #f8fcfa);
+        box-shadow: 0 14px 32px rgba(44, 73, 57, 0.07);
+      }
+
+      .comments-panel h2 {
+        margin: 0 0 8px;
+        color: #315d47;
+        font-size: 20px;
+      }
+
+      .comments-status {
+        margin: 0;
+        color: #53675b;
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      .giscus {
+        margin-top: 14px;
+      }
+
+      .featured-links {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px 22px;
+        font-size: 17px;
+      }
+
+      .featured-links a {
+        display: inline-block;
+        width: fit-content;
+        border-radius: 8px;
+        padding: 7px 10px;
+        color: #1558b0;
+        text-decoration: none;
+        transition: background-color 0.18s ease, transform 0.18s ease;
+      }
+
+      .featured-links a:hover {
+        background: rgba(255, 255, 255, 0.8);
+        transform: translateX(2px);
+        text-decoration: underline;
+      }
+
+      @media (max-width: 900px) {
+        .featured-links { grid-template-columns: 1fr; }
+        .url-list { grid-template-columns: 1fr; }
+      }
+
+      @media (max-width: 560px) {
+        .page { padding: 18px 12px 28px; }
+        .link-panel,
+        .url-zone { padding: 18px 16px; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { transition-duration: 0.01ms !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="toolbar">
+        <label class="visually-hidden" for="language-select">Language / 語言 / 语言</label>
+        <select class="language-select" id="language-select" aria-label="Language">
+          <option value="zh-CN">简体中文</option>
+          <option value="zh-TW">繁體中文</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <aside class="site-note">
+        <a data-i18n="browserLink" href="https://games-unblocked.pages.dev/" target="_blank" rel="noreferrer">网页游戏站</a>
+        <span data-i18n="browserWarning">打开后可能有部分图片无法显示。</span>
+        <a data-i18n="imageHelp" href="https://docs.google.com/document/d/198CE_n4JK8QiDlUI22z1EqV8hwvZswZGdSgt1Ba0EQI/edit?tab=t.0" target="_blank" rel="noreferrer">查看图片缺失说明</a>
+      </aside>
+
+      <header class="hero">
+        <h1 data-i18n="pageTitle">摸鱼天堂</h1>
+      </header>
+
+      <section class="link-panel featured-panel" aria-label="精选游戏链接" data-i18n-aria="featuredHeading">
+        <h2 data-i18n="featuredHeading">精选游戏链接</h2>
+        <div class="featured-links">
+          <a data-i18n="linkStarcraft" href="https://starcraft-shooter-2026.pages.dev/" target="_blank" rel="noreferrer">星际争霸世界观割草游戏</a>
+          <a data-i18n="linkTownscaper" href="https://oskarstalberg.com/Townscaper/" target="_blank" rel="noreferrer">城镇叠叠乐</a>
+          <a data-i18n="linkPlanet" href="https://oskarstalberg.com/game/planet/planet.html" target="_blank" rel="noreferrer">星球叠叠乐</a>
+          <a data-i18n="linkTouhou" href="https://tkkn-2099.pages.dev/" target="_blank" rel="noreferrer">类东方躲弹幕</a>
+          <a data-i18n="linkWplace" href="https://wplace.live/" target="_blank" rel="noreferrer">地球涂鸦</a>
+          <a data-i18n="linkBplace" href="https://bplace.art/" target="_blank" rel="noreferrer">地球涂鸦的弟弟</a>
+          <a data-i18n="linkGomoku" href="https://www.gomocalc.com/#/h8i9i7" target="_blank" rel="noreferrer">单人五子棋网站</a>
+          <a data-i18n="linkWorld" href="https://worldofclaudecraft.com/" target="_blank" rel="noreferrer">类魔兽世界游戏</a>
+          <a data-i18n="linkMerge" href="https://mergeciv.io/" target="_blank" rel="noreferrer">合并文明</a>
+          <a data-i18n="linkMinecraft" href="https://blog.imc.re/archives/44d2" target="_blank" rel="noreferrer">Ai制作类mc游戏</a>
+          <a data-i18n="linkBenchmark" href="https://humanbenchmark.com/" target="_blank" rel="noreferrer">人类基准测试</a>
+        </div>
+      </section>
+
+      <section class="url-zone" aria-label="待确认可用网站" data-i18n-aria="trialHeading">
+        <h3 data-i18n="trialHeading">待确认可用网站</h3>
+        <div class="url-list">
+          <a href="https://openfront.io/" target="_blank" rel="noreferrer">https://openfront.io/</a>
+          <a href="https://www.airconsole.com/" target="_blank" rel="noreferrer">https://www.airconsole.com/</a>
+          <a href="https://www.geo-fs.com/geofs.php?v=3.9" target="_blank" rel="noreferrer">https://www.geo-fs.com/geofs.php?v=3.9</a>
+          <a href="https://slowroads.io/" target="_blank" rel="noreferrer">https://slowroads.io/</a>
+          <a href="http://xproger.info/projects/OpenLara/" target="_blank" rel="noreferrer">http://xproger.info/projects/OpenLara/</a>
+          <a href="https://cjdgrevival.com/" target="_blank" rel="noreferrer">https://cjdgrevival.com/</a>
+          <a href="https://taikoapp.uk/" target="_blank" rel="noreferrer">https://taikoapp.uk/</a>
+          <a href="https://www.retrogames.onl/" target="_blank" rel="noreferrer">https://www.retrogames.onl/</a>
+          <a href="https://playcs.cc/" target="_blank" rel="noreferrer">https://playcs.cc/</a>
+          <a href="https://nazo.one-story.top/" target="_blank" rel="noreferrer">https://nazo.one-story.top/</a>
+          <a href="https://color.method.ac/" target="_blank" rel="noreferrer">https://color.method.ac/</a>
+          <a href="https://www.yikm.net/" target="_blank" rel="noreferrer">https://www.yikm.net/</a>
+          <a href="https://game.ur1.fun/cube/" target="_blank" rel="noreferrer">https://game.ur1.fun/cube/</a>
+          <a href="https://suulnnka.github.io/BullshitGenerator/" target="_blank" rel="noreferrer">https://suulnnka.github.io/BullshitGenerator/</a>
+          <a href="https://maxwellcat.world/" target="_blank" rel="noreferrer">https://maxwellcat.world/</a>
+          <a href="https://messenger.abeto.co/" target="_blank" rel="noreferrer">https://messenger.abeto.co/</a>
+          <a href="https://rosebud.ai/" target="_blank" rel="noreferrer">https://rosebud.ai/</a>
+          <a href="https://inkwavegame.com/play/game/" target="_blank" rel="noreferrer">https://inkwavegame.com/play/game/</a>
+          <a href="https://drawlineracing.chyuang.com/track/jordan" target="_blank" rel="noreferrer">https://drawlineracing.chyuang.com/track/jordan</a>
+        </div>
+      </section>
+
+      <section class="comments-panel" aria-label="留言区" data-i18n-aria="commentsHeading">
+        <h2 data-i18n="commentsHeading">留言区</h2>
+        <p class="comments-status" id="comments-status" data-i18n="commentsSetup">
+          留言区尚未连接。发布网站前，请按页面部署说明配置免费的 Giscus 评论服务。
+        </p>
+        <div class="giscus" id="giscus-container"></div>
+      </section>
+    </div>
+    <script>
+      const translations = {
+        "zh-CN": {
+          documentTitle: "摸鱼天堂 - 网页游戏导航",
+          pageTitle: "摸鱼天堂",
+          browserLink: "网页游戏站",
+          browserWarning: "打开后可能有部分图片无法显示。",
+          imageHelp: "查看图片缺失说明",
+          featuredHeading: "精选游戏链接",
+          trialHeading: "待确认可用网站",
+          commentsHeading: "留言区",
+          commentsSetup: "留言区尚未连接。网站管理员完成免费的 Giscus 设置后即可启用。",
+          linkStarcraft: "星际争霸世界观割草游戏",
+          linkTownscaper: "城镇叠叠乐",
+          linkPlanet: "星球叠叠乐",
+          linkTouhou: "类东方躲弹幕",
+          linkWplace: "地球涂鸦",
+          linkBplace: "地球涂鸦的弟弟",
+          linkGomoku: "单人五子棋网站",
+          linkWorld: "类魔兽世界游戏",
+          linkMerge: "合并文明",
+          linkMinecraft: "AI制作类MC游戏",
+          linkBenchmark: "人类基准测试"
+        },
+        "zh-TW": {
+          documentTitle: "摸魚天堂 - 網頁遊戲導航",
+          pageTitle: "摸魚天堂",
+          browserLink: "網頁遊戲站",
+          browserWarning: "開啟後可能有部分圖片無法顯示。",
+          imageHelp: "查看圖片缺失說明",
+          featuredHeading: "精選遊戲連結",
+          trialHeading: "待確認可用網站",
+          commentsHeading: "留言區",
+          commentsSetup: "留言區尚未連接。網站管理員完成免費的 Giscus 設定後即可啟用。",
+          linkStarcraft: "星際爭霸世界觀割草遊戲",
+          linkTownscaper: "城鎮疊疊樂",
+          linkPlanet: "星球疊疊樂",
+          linkTouhou: "類東方躲彈幕",
+          linkWplace: "地球塗鴉",
+          linkBplace: "地球塗鴉的弟弟",
+          linkGomoku: "單人五子棋網站",
+          linkWorld: "類魔獸世界遊戲",
+          linkMerge: "合併文明",
+          linkMinecraft: "AI製作類MC遊戲",
+          linkBenchmark: "人類基準測試"
+        },
+        en: {
+          documentTitle: "Idle Paradise - Web Game Directory",
+          pageTitle: "Idle Paradise",
+          browserLink: "Web Games Site",
+          browserWarning: "Some images may not display when you open the site.",
+          imageHelp: "View image display notes",
+          featuredHeading: "Featured Games",
+          trialHeading: "More Sites to Try",
+          commentsHeading: "Comments",
+          commentsSetup: "Comments are not connected yet. The site administrator can enable them by completing the free Giscus setup.",
+          linkStarcraft: "StarCraft-Inspired Hack-and-Slash",
+          linkTownscaper: "Townscaper",
+          linkPlanet: "Planet Builder",
+          linkTouhou: "Bullet-Hell Dodging Game",
+          linkWplace: "World Doodle",
+          linkBplace: "World Doodle's Little Brother",
+          linkGomoku: "Single-Player Gomoku",
+          linkWorld: "World of Warcraft-Like Game",
+          linkMerge: "Merge Civilization",
+          linkMinecraft: "AI-Created Minecraft-Like Game",
+          linkBenchmark: "Human Benchmark"
+        }
+      };
+
+      const languageSelect = document.getElementById("language-select");
+      const giscusConfig = {
+        repo: "",
+        repoId: "",
+        category: "General",
+        categoryId: ""
+      };
+      let giscusScript;
+
+      function configureComments(language) {
+        const giscusLanguage = language === "zh-CN" ? "zh-CN" : language === "zh-TW" ? "zh-TW" : "en";
+        const configured =
+          /^[^/]+\/[^/]+$/.test(giscusConfig.repo) &&
+          giscusConfig.repoId.length > 0 &&
+          giscusConfig.category.length > 0 &&
+          giscusConfig.categoryId.length > 0;
+        const status = document.getElementById("comments-status");
+        const container = document.getElementById("giscus-container");
+
+        if (!configured) {
+          status.hidden = false;
+          return;
+        }
+
+        status.hidden = true;
+        if (giscusScript) {
+          const frame = container.querySelector(".giscus-frame");
+          if (frame) {
+            frame.contentWindow.postMessage(
+              { giscus: { setConfig: { lang: giscusLanguage } } },
+              "https://giscus.app"
+            );
+          }
+          return;
+        }
+
+        giscusScript = document.createElement("script");
+        giscusScript.src = "https://giscus.app/client.js";
+        giscusScript.async = true;
+        giscusScript.crossOrigin = "anonymous";
+        giscusScript.dataset.repo = giscusConfig.repo;
+        giscusScript.dataset.repoId = giscusConfig.repoId;
+        giscusScript.dataset.category = giscusConfig.category;
+        giscusScript.dataset.categoryId = giscusConfig.categoryId;
+        giscusScript.dataset.mapping = "pathname";
+        giscusScript.dataset.strict = "0";
+        giscusScript.dataset.reactionsEnabled = "1";
+        giscusScript.dataset.emitMetadata = "0";
+        giscusScript.dataset.inputPosition = "top";
+        giscusScript.dataset.theme = "light";
+        giscusScript.dataset.lang = giscusLanguage;
+        giscusScript.dataset.loading = "lazy";
+        container.appendChild(giscusScript);
+      }
+
+      function setLanguage(language) {
+        const messages = translations[language] || translations["zh-CN"];
+        document.documentElement.lang = language;
+        document.title = messages.documentTitle;
+        document.querySelectorAll("[data-i18n]").forEach((element) => {
+          element.textContent = messages[element.dataset.i18n];
+        });
+        document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+          element.setAttribute("aria-label", messages[element.dataset.i18nAria]);
+        });
+        languageSelect.value = language;
+        localStorage.setItem("preferred-language", language);
+        configureComments(language);
+      }
+
+      languageSelect.addEventListener("change", (event) => {
+        setLanguage(event.target.value);
+      });
+
+      const savedLanguage = localStorage.getItem("preferred-language");
+      setLanguage(savedLanguage && translations[savedLanguage] ? savedLanguage : "zh-CN");
+    </script>
+  </body>
+</html>
